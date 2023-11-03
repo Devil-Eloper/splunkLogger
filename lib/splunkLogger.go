@@ -100,14 +100,12 @@ func (logger *Logger) SendBatch(batchSend bool) error {
 
 	}
 	log.Print("Splunk 4")
-	//request, err := http.NewRequest(Post, logger.splunkHECEndpoint, &buffer)
-	request, err := http.NewRequest(Post, SplunkUrl, &buffer)
+	request, err := http.NewRequest(Post, logger.splunkHECEndpoint, &buffer)
 	if err != nil {
 		return err
 	}
 
-	//request.Header.Set(Authorization, Splunk+logger.splunkHECToken)
-	request.Header.Set(Authorization, Splunk+SplunkToken)
+	request.Header.Set(Authorization, Splunk+logger.splunkHECToken)
 	request.Header.Set(ContentType, ApplicationJson)
 
 	//response, err := logger.httpClient.Do(request)
