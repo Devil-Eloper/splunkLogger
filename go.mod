@@ -1,3 +1,3 @@
-module github.azc.ext.hp.com/jalaj-joshi/splunkLogger
+module github.com/Devil-Eloper/splunkLogger
 
 go 1.20
