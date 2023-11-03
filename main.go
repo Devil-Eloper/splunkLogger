@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.azc.ext.hp.com/Devil-Eloper/splunkLogger/lib"
+	"github.com/Devil-Eloper/splunkLogger/lib"
 )
 
 func main() {
