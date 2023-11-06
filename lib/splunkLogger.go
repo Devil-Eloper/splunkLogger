@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -38,7 +39,7 @@ func New(splunkToken, splunkEndpoint, batchSize string) *Logger {
 	batchLimit, _ := strconv.Atoi(batchSize)
 	log.Print("Splunk 1")
 	return &Logger{
-		httpClient:        &http.Client{}, // This can be passed from the caller so that throughout the lifecycle we maintain only 1 httpClient
+		httpClient:        &http.Client{Timeout: 10 * time.Second}, // This can be passed from the caller so that throughout the lifecycle we maintain only 1 httpClient
 		splunkHECToken:    splunkToken,
 		splunkHECEndpoint: splunkEndpoint,
 		logs:              []StructuredLog{},
@@ -102,6 +103,7 @@ func (logger *Logger) SendBatch(batchSend bool) error {
 	log.Print("Splunk 4")
 	request, err := http.NewRequest(Post, logger.splunkHECEndpoint, &buffer)
 	if err != nil {
+		log.Print("Splunk 4.1", err.Error())
 		return err
 	}
 
@@ -109,7 +111,15 @@ func (logger *Logger) SendBatch(batchSend bool) error {
 	request.Header.Set(ContentType, ApplicationJson)
 
 	//response, err := logger.httpClient.Do(request)
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
+
+	//If we are working with a trial account the certificate will be self-signed, so we want to ignore certificate verification
+
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client.Transport = tr
+
 	response, err := client.Do(request)
 	if err != nil {
 		log.Print("Splunk 5", err.Error())
