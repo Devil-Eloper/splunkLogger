@@ -114,7 +114,6 @@ func (logger *Logger) SendBatch(batchSend bool) error {
 	client := &http.Client{Timeout: 10 * time.Second}
 
 	//If we are working with a trial account the certificate will be self-signed, so we want to ignore certificate verification
-
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -153,6 +152,9 @@ func (logger *Logger) addLogs(messageId, et, message, level string) {
 	logger.mutex.Unlock()
 	log.Print("Splunk 8")
 	if batchSend {
-		go logger.SendBatch(batchSend) // Executes separately. Not handling the error yet.
+		err := logger.SendBatch(batchSend)
+		if err != nil {
+			log.Print("Splunk 8.1")
+		} // Executes separately. Not handling the error yet.
 	}
 }
