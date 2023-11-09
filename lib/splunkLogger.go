@@ -72,7 +72,7 @@ func (logger *Logger) Debug(messageId, et, message string) {
 }
 
 func (logger *Logger) SendBatch(batchSend bool) error {
-	if !batchSend {
+	if !batchSend || logger.logs == nil {
 		return nil
 	}
 	log.Print("Splunk 2")
@@ -152,9 +152,6 @@ func (logger *Logger) addLogs(messageId, et, message, level string) {
 	logger.mutex.Unlock()
 	log.Print("Splunk 8")
 	if batchSend {
-		err := logger.SendBatch(batchSend)
-		if err != nil {
-			log.Print("Splunk 8.1")
-		} // Executes separately. Not handling the error yet.
+		go logger.SendBatch(batchSend)
 	}
 }
